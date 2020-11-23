@@ -2,6 +2,16 @@ const readline = require('readline');
 const fs = require('fs');
 
 
+let appNames = [];
+
+const fileHasBeenRead = (err, data) => {
+    if (err) {
+        throw err;
+    }
+    const obj = JSON.parse(data)
+    todos = obj.fileNames;
+}
+
 const PATH_TO_TODOS_FILE = __dirname + '/../back-end/todos.json';
 let todos = [];
 const interface = readline.createInterface({
@@ -122,3 +132,26 @@ const handleMenu = function(cmd) {
 
 displayTodos();
 displayMenu();
+
+savedTodos = [];
+
+// displayMenu();
+
+const saveTodos = (todo) => {
+  savedTodos.push(todo);
+    const obj = {
+        fileNames: todos, 
+    }
+
+    const data = JSON.stringify(obj, null, 2)
+    fs.writeFile('./todos.json', data, 'utf8', function(err) {
+        if (err) {
+            throw err;
+        }
+
+    console.log('\n' + todo + ' has been added!\n')
+    interface.question('Type 1 to get a random name, 2 to add a name to the list. Anything else quits.\n\n', handleAnswer);
+})
+}
+
+fs.readFile('./todos.json', fileHasBeenRead)
